@@ -47,7 +47,7 @@
         const productId = urlParams.get('product_id');
 
         // Fetch product details
-        fetch(`https://yourdomain.com/api/products/${productId}/`)
+        fetch(`https://apiorderbot.onrender.com/api/products/${productId}/`)
             .then(response => response.json())
             .then(product => {
                 document.getElementById('productDetails').innerHTML = `
@@ -80,7 +80,7 @@
             };
 
             // Send data to the API
-            fetch('https://yourdomain.com/api/orders/', {
+            fetch('https://apiorderbot.onrender.com/api/orders/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,7 +92,7 @@
             .then(data => {
                 if (data.status === 'success') {
                     alert('Order submitted successfully!');
-                    tg.close();  // Close the WebApp on success
+                    tg.close();
                 } else {
                     alert('Failed to submit order: ' + data.message);
                 }
