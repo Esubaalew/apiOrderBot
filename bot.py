@@ -9,7 +9,7 @@ async def start(update, context: ContextTypes.DEFAULT_TYPE):
     product_id = 1  # Example product ID (this should be dynamic for each product)
 
     # Create the WebApp URL with the product_id as a query parameter
-    webapp_url = f"https://apiorderbot.onrender.com/weapp/{product_id}/"
+    webapp_url = f"https://apiorderbot.onrender.com/api/webapp/?product_id={product_id}"
 
     # Create a button to launch the WebApp
     keyboard = [

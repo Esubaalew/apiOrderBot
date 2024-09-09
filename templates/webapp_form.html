@@ -9,9 +9,12 @@
 <body>
     <div class="container mt-5">
         <h1>Order Product</h1>
-        <p id="productDetails"></p>
+        <div id="productSection">
+            <p id="productDetails"></p>
+        </div>
 
-        <form id="orderForm">
+        <!-- Order form will only show when the product is found -->
+        <form id="orderForm" style="display: none;">
             <div class="mb-3">
                 <label for="fullName" class="form-label">Full Name</label>
                 <input type="text" class="form-control" id="fullName" required>
@@ -48,16 +51,30 @@
 
         // Fetch product details from the WebApp endpoint
         fetch(`https://apiorderbot.onrender.com/api/webapp/?product_id=${productId}`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Product not found');  // Trigger an error if the product is not found
+                }
+                return response.json();
+            })
             .then(product => {
+                // Display the product details
                 document.getElementById('productDetails').innerHTML = `
                     <img src="${product.image}" alt="${product.name}" class="img-fluid">
                     <h2>${product.name}</h2>
                     <p>${product.description}</p>
                     <p><strong>Price:</strong> $${product.price}</p>
                 `;
+
+                // Show the order form only after the product details are successfully loaded
+                document.getElementById('orderForm').style.display = 'block';
             })
-            .catch(error => console.error('Error fetching product details:', error));
+            .catch(error => {
+                // If an error occurs (e.g., product not found), show an error message
+                document.getElementById('productSection').innerHTML = `
+                    <p class="text-danger">Sorry, the product could not be found. Please try again later.</p>
+                `;
+            });
 
         // Handle form submission
         document.getElementById('orderForm').addEventListener('submit', function(event) {
