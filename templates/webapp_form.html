@@ -46,8 +46,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('product_id');
 
-        // Fetch product details
-        fetch(`https://apiorderbot.onrender.com/api/products/${productId}/`)
+        // Fetch product details from the WebApp endpoint
+        fetch(`https://apiorderbot.onrender.com/api/webapp/?product_id=${productId}`)
             .then(response => response.json())
             .then(product => {
                 document.getElementById('productDetails').innerHTML = `
@@ -84,7 +84,8 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}',  // CSRF token for security
+                    // Include CSRF token if required by your Django setup
+                    // 'X-CSRFToken': '{{ csrf_token }}',
                 },
                 body: JSON.stringify(orderData)
             })
@@ -92,7 +93,7 @@
             .then(data => {
                 if (data.status === 'success') {
                     alert('Order submitted successfully!');
-                    tg.close();
+                    tg.close();  // Close the WebApp on success
                 } else {
                     alert('Failed to submit order: ' + data.message);
                 }
