@@ -154,17 +154,20 @@
                 },
                 body: JSON.stringify(orderData)
             })
-            .then(response => response.json())
-            .then(data => {
-                // Re-enable the submit button and hide loading spinner
-                submitButton.disabled = false;
+            .then(response => {
+                // Ensure the spinner is hidden regardless of success or failure
                 document.getElementById('loadingSpinner').style.display = 'none';
+                return response.json();
+            })
+            .then(data => {
+                // Re-enable the submit button
+                submitButton.disabled = false;
 
                 if (data.status === 'success') {
                     alert('Order submitted successfully!');
                     tg.close();  // Close the WebApp on success
                 } else {
-                    alert('Failed to submit order: ' + data.message);
+                    alert('Failed to submit order: ' + (data.message || 'An unknown error occurred.'));
                 }
             })
             .catch(error => {
