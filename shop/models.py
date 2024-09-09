@@ -14,7 +14,7 @@ class Product(models.Model):
 
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=100)
+    full_name = models.CharField(max_length=100, blank=True, null=True)
     address = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=15)
     comment = models.TextField(blank=True, null=True)
