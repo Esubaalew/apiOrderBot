@@ -167,7 +167,8 @@
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrftoken  // Include the CSRF token
                 },
-                body: JSON.stringify(orderData)
+                body: JSON.stringify(orderData),
+                credentials: 'include'  // Include credentials (like cookies)
             })
             .then(response => {
                 // Ensure the spinner is hidden regardless of success or failure

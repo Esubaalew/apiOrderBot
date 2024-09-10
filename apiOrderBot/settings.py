@@ -134,3 +134,11 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
+
+
+# settings.py
+
+# Ensure CSRF cookie is enabled
+CSRF_COOKIE_SECURE = True  # Use True if you are serving over HTTPS
+CSRF_COOKIE_HTTPONLY = False  # Make sure this is set correctly
+CSRF_COOKIE_SAMESITE = 'Lax'  # 'Strict' or 'Lax' is recommended for security
