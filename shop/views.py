@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import viewsets
 from rest_framework import permissions
 
@@ -8,6 +8,7 @@ from .models import Product, Order
 from .serializers import ProductSerializer, OrderSerializer
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.utils.decorators import method_decorator
+from .forms import ReceiptUploadForm
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -28,9 +29,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 @csrf_protect
 def webapp_view(request):
     product_id = request.GET.get('product_id')
-    print(product_id)
     product = get_object_or_404(Product, id=product_id)
-    print(product)
 
     if request.method == 'POST':
         # Retrieve form data
@@ -47,10 +46,34 @@ def webapp_view(request):
             address=address,
             phone_number=phone_number,
             comment=comment,
-            amount=amount
+            amount=amount,
+            payment_method='bank',  # Set default payment method for redirection
+            is_paid=False
         )
 
-        # Return success response
-        return JsonResponse({'status': 'success', 'message': 'Order created successfully!'})
+        # Redirect to payment choice page
+        return redirect('payment_choice', order_id=order.id)
 
     return render(request, 'webapp.html', {'product': product})
+
+@csrf_protect
+def payment_choice_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    
+    if request.method == 'POST':
+        form = ReceiptUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            payment_method = form.cleaned_data.get('payment_method')
+            receipt_file = form.cleaned_data.get('receipt_file')
+            
+            # Update the order with payment method and receipt
+            order.payment_method = payment_method
+            order.receipt_file = receipt_file
+            order.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Payment info submitted successfully!'})
+
+    else:
+        form = ReceiptUploadForm()
+
+    return render(request, 'payment_choice.html', {'form': form, 'order': order})
