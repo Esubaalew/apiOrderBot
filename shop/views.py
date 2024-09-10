@@ -71,7 +71,8 @@ def payment_choice_view(request, order_id):
             order.receipt_file = receipt_file
             order.save()
 
-            return JsonResponse({'status': 'success', 'message': 'Payment info submitted successfully!'})
+            # Redirect to success page
+            return render(request, 'payment_success.html', {'order': order})
 
     else:
         form = ReceiptUploadForm()
