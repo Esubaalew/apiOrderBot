@@ -1,5 +1,3 @@
-# your_app/signals.py
-
 import requests
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -15,30 +13,34 @@ CHANNEL_ID = '-1002437698028'
 def send_product_to_channel(sender, instance, created, **kwargs):
     URL = settings.SITE_URL
     if created:
-        # Prepare the message with the product details
+        # Image URL
+        image_url = URL + instance.image.url
 
-        message = f"New Product Added!\n\n" \
-                  f"Name: {instance.name}\n" \
-                  f"Description: {instance.description}\n" \
-                  f"Price: {instance.price}\n" \
-                  f"Image: {URL + instance.image.url}\n"
+        # Caption to be sent with the phot
+        caption = (
+            f"<b>{instance.name}</b>\n\n"  # Product name in bold
+            f"<i>{instance.description}</i>\n\n"  # Product description in italic
+            f"ðŸ’² <b>Price:</b> {instance.price}\n"  # Add an emoji before price and make the label bold
+        )
 
         # Direct link to open the Mini App
         direct_link = f"https://t.me/StoreNowBot/mystore?startapp=product-{instance.id}"
-        # URL to send the message
-        url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
+
+        # URL for sending the photo with a caption
+        url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto'
 
         # Data to be sent in the HTTP POST request
         data = {
             'chat_id': CHANNEL_ID,
-            'text': message,
-            'parse_mode': 'HTML',  # Use HTML mode to format the message (optional)
+            'photo': image_url,
+            'caption': caption,
+            'parse_mode': 'HTML',  # Using HTML mode for formatting
             'reply_markup': {
                 'inline_keyboard': [
                     [
                         {
                             'text': 'Order Now',
-                            'url': direct_link
+                            'url': direct_link  # Link to the product mini app
                         }
                     ]
                 ]
@@ -48,5 +50,5 @@ def send_product_to_channel(sender, instance, created, **kwargs):
         # Send the HTTP POST request
         response = requests.post(url, json=data)
 
-        # Print the response (optional)
+        # Print the response from Telegram for debugging
         print(response.json())

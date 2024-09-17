@@ -44,6 +44,11 @@
             <!-- Product details will be populated here -->
         </div>
 
+        <!-- Error Message Alert -->
+        <div id="errorAlert" class="alert alert-danger d-none" role="alert">
+            <strong>Error!</strong> <span id="errorMessage">Please correct the errors and try again.</span>
+        </div>
+
         <!-- Order Form -->
         <div class="mt-4">
             <h4>Fill out your details to place the order:</h4>
@@ -85,20 +90,45 @@
         const quantityInput = document.getElementById('quantity');
         const submitButton = document.querySelector('button[type="submit"]');
         const formFields = [phoneInput, quantityInput];
+        const errorAlert = document.getElementById('errorAlert');
+        const errorMessage = document.getElementById('errorMessage');
 
-        // Validate phone number and quantity fields
-        formFields.forEach(field => {
-            field.addEventListener('input', function() {
-                if (phoneInput.validity.valid && quantityInput.value > 0) {
-                    submitButton.disabled = false;
-                } else {
-                    submitButton.disabled = true;
+        // Function to check input validity and toggle submit button
+        function validateForm() {
+            const phonePattern = /^[0-9]{10}$/;
+            const isPhoneValid = phonePattern.test(phoneInput.value);
+            const isQuantityValid = quantityInput.value > 0;
+
+            // Toggle button based on validity
+            if (isPhoneValid && isQuantityValid) {
+                submitButton.disabled = false;
+                errorAlert.classList.add('d-none');
+            } else {
+                submitButton.disabled = true;
+                errorAlert.classList.remove('d-none');
+                if (!isPhoneValid) {
+                    errorMessage.textContent = "Invalid phone number. Please enter a valid 10-digit phone number.";
+                } else if (!isQuantityValid) {
+                    errorMessage.textContent = "Quantity must be greater than 0.";
                 }
-            });
+            }
+        }
+
+        // Attach input event listener to form fields for real-time validation
+        formFields.forEach(field => {
+            field.addEventListener('input', validateForm);
         });
 
         // Add loading state when form is submitted
         document.getElementById('orderForm').addEventListener('submit', function(event) {
+            const isFormValid = !submitButton.disabled;
+
+            if (!isFormValid) {
+                event.preventDefault();
+                errorAlert.classList.remove('d-none');
+                return;
+            }
+
             submitButton.disabled = true;
             submitButton.innerHTML = 'Processing...';
         });
@@ -115,7 +145,7 @@
 
         // Function to fetch and display product details
         function loadProduct(productId) {
-            fetch(`https://apiorderbot.onrender.com/api/products/${productId}`)
+            fetch(`https://admin.4gmobiles.com/api/products/${productId}`)
                 .then(response => response.json())
                 .then(data => {
                     const productCard = document.getElementById('productCard');

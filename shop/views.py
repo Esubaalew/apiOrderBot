@@ -1,14 +1,9 @@
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework import viewsets
 from rest_framework import permissions
-
-from .forms import OrderForm
 from .models import Product, Order
 from .serializers import ProductSerializer, OrderSerializer
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.utils.decorators import method_decorator
-from .forms import ReceiptUploadForm
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -31,7 +26,6 @@ from .models import Product, Order
 from .forms import ReceiptUploadForm
 import logging
 
-# Get an instance of a logger
 logger = logging.getLogger(__name__)
 
 
@@ -65,9 +59,8 @@ def webapp_view(request):
         address = request.POST.get('address')
         phone_number = request.POST.get('phone_number')
         comment = request.POST.get('comment', '')
-        quantity = int(request.POST.get('quantity', 1))  # Ensure quantity is captured
+        quantity = int(request.POST.get('quantity', 1))
 
-        # Calculate the total price based on quantity
         total_price = product.price * quantity
 
         order = Order.objects.create(
@@ -76,8 +69,8 @@ def webapp_view(request):
             address=address,
             phone_number=phone_number,
             comment=comment,
-            quantity=quantity,  # Save the quantity to the order
-            total_price=total_price,  # Store the total price
+            quantity=quantity,
+            total_price=total_price,
             payment_method='bank',
             is_paid=False
         )
@@ -107,6 +100,4 @@ def payment_choice_view(request, order_id):
     else:
         form = ReceiptUploadForm()
 
-    # Pass the correct quantity and total price to the template
     return render(request, 'payment_choice.html', {'form': form, 'order': order})
-
