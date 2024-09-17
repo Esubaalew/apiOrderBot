@@ -29,24 +29,55 @@ class OrderViewSet(viewsets.ModelViewSet):
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Product, Order
 from .forms import ReceiptUploadForm
+import logging
 
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 @csrf_protect
 def webapp_view(request):
+    # Log the request method and query params
+    logger.info(f"Request Method: {request.method}")
+    logger.info(f"Query Parameters: {request.GET}")
+
     start_param = request.GET.get('tgWebAppStartParam', '')
+
+    # Log the start_param value
+    logger.info(f"Start Parameter: {start_param}")
+
     if start_param.startswith('product-'):
-        product_id = start_param.split('-')[1]
-        product = get_object_or_404(Product, id=product_id)
+        try:
+            product_id = start_param.split('-')[1]
+            logger.info(f"Product ID extracted: {product_id}")
+
+            # Try to fetch the product
+            product = get_object_or_404(Product, id=product_id)
+            logger.info(f"Product found: {product.name} (ID: {product.id})")
+
+        except (IndexError, ValueError):
+            logger.error("Error extracting product ID from start_param")
+            return render(request, '404.html', {'error': 'Invalid product ID'})
+
     else:
-        return render(request, '404.html')
+        logger.error("Invalid start_param, does not start with 'product-'")
+        return render(request, '404.html', {'error': 'Product not found'})
 
     if request.method == 'POST':
+        # Log POST data
+        logger.info(f"POST Data: {request.POST}")
+
+        # Extract form data
         full_name = request.POST.get('full_name')
         address = request.POST.get('address')
         phone_number = request.POST.get('phone_number')
         comment = request.POST.get('comment', '')
         amount = request.POST.get('amount')
 
+        # Log form data
+        logger.info(f"Form Data - Full Name: {full_name}, Address: {address}, Phone: {phone_number}, Amount: {amount}")
+
+        # Create order
         order = Order.objects.create(
             product=product,
             full_name=full_name,
@@ -54,14 +85,19 @@ def webapp_view(request):
             phone_number=phone_number,
             comment=comment,
             amount=amount,
-            payment_method='bank',
+            payment_method='bank',  # Default payment method
             is_paid=False
         )
 
+        # Log the newly created order
+        logger.info(f"Order created - ID: {order.id}, Amount: {order.amount}, Product: {product.name}")
+
+        # Redirect to payment choice page
         return redirect('payment_choice', order_id=order.id)
 
+    # Log rendering the product page
+    logger.info(f"Rendering product page for product: {product.name}")
     return render(request, 'webapp.html', {'product': product})
-
 
 @csrf_protect
 def payment_choice_view(request, order_id):
