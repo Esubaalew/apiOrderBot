@@ -24,8 +24,7 @@ def send_product_to_channel(sender, instance, created, **kwargs):
                   f"Image: {URL + instance.image.url}\n"
 
         # Direct link to open the Mini App
-        direct_link = f"https://t.me/ordernowbot?startapp=order&product_id={instance.id}"
-
+        direct_link = f"https://t.me/StoreNowBot/mystore?startapp=product-{instance.id}"
         # URL to send the message
         url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
 
