@@ -61,16 +61,14 @@ def webapp_view(request):
         return render(request, '404.html', {'error': 'Product not found'})
 
     if request.method == 'POST':
-        logger.info(f"POST Data: {request.POST}")
-
         full_name = request.POST.get('full_name')
         address = request.POST.get('address')
         phone_number = request.POST.get('phone_number')
         comment = request.POST.get('comment', '')
-        quantity = int(request.POST.get('quantity', 1))  # Get quantity, default to 1 if not provided
+        quantity = int(request.POST.get('quantity', 1))  # Ensure quantity is captured
 
-        logger.info(
-            f"Form Data - Full Name: {full_name}, Address: {address}, Phone: {phone_number}, Quantity: {quantity}")
+        # Calculate the total price based on quantity
+        total_price = product.price * quantity
 
         order = Order.objects.create(
             product=product,
@@ -78,12 +76,11 @@ def webapp_view(request):
             address=address,
             phone_number=phone_number,
             comment=comment,
-            quantity=quantity,  # Updated quantity
+            quantity=quantity,  # Save the quantity to the order
+            total_price=total_price,  # Store the total price
             payment_method='bank',
             is_paid=False
         )
-
-        logger.info(f"Order created - ID: {order.id}, Total Price: {order.total_price}, Product: {product.name}")
 
         return redirect('payment_choice', order_id=order.id)
 
@@ -110,4 +107,6 @@ def payment_choice_view(request, order_id):
     else:
         form = ReceiptUploadForm()
 
+    # Pass the correct quantity and total price to the template
     return render(request, 'payment_choice.html', {'form': form, 'order': order})
+

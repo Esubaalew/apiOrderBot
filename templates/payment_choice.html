@@ -26,43 +26,57 @@
 </head>
 <body>
     <div class="container mt-5">
-        <div class="payment-card">
-            <h1>Select Payment Method for {{ order.product.name }}</h1>
-            
-            <!-- Display the quantity and the total price -->
-            <p>Quantity: {{ order.quantity }}</p>
-            <p>Total Price: ${{ order.total_price }}</p> <!-- Display the total price -->
-            
-            <form id="paymentForm" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label class="form-label">Payment Method</label>
-                    <div>
-                        <input type="radio" id="bank" name="payment_method" value="bank" checked>
-                        <label for="bank">Bank</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="chapa" name="payment_method" value="chapa" disabled>
-                        <label for="chapa">Chapa (Coming Soon)</label>
-                    </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-sm-12">
+                <div class="payment-card">
+                    <h1>Select Payment Method for {{ order.product.name }}</h1>
+                    
+                    <!-- Display the quantity and the total price -->
+                    <p>Quantity: {{ order.quantity }}</p>
+                    <p>Total Price: ${{ order.total_price }}</p> <!-- Display the total price -->
+                    
+                    <form id="paymentForm" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Payment Method</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="bank" name="payment_method" value="bank" checked>
+                                <label class="form-check-label" for="bank">Bank</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="chapa" name="payment_method" value="chapa" disabled>
+                                <label class="form-check-label" for="chapa">Chapa (Coming Soon)</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="receiptFile" class="form-label">Upload Bank Receipt</label>
+                            <input type="file" class="form-control" id="receiptFile" name="receipt_file" accept=".jpg,.jpeg,.png,.pdf" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" disabled>Submit Payment</button>
+                    </form>
                 </div>
-                <div class="mb-3">
-                    <label for="receiptFile" class="form-label">Upload Bank Receipt</label>
-                    <input type="file" class="form-control" id="receiptFile" name="receipt_file" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Submit Payment</button>
-            </form>
+            </div>
         </div>
     </div>
 
+    <!-- Telegram WebApp JavaScript -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        const receiptInput = document.getElementById('receiptFile');
+        const submitButton = document.querySelector('button[type="submit"]');
+
+        // Enable submit button when file is uploaded
+        receiptInput.addEventListener('change', function() {
+            submitButton.disabled = !this.files.length;
+        });
+
         document.getElementById('paymentForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            this.submit();
+            // Add loading state when form is submitted
+            submitButton.disabled = true;
+            submitButton.innerHTML = 'Processing...';
         });
     </script>
 </body>
