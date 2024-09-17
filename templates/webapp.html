@@ -76,7 +76,7 @@
         function getQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             return {
-                product_id: urlParams.get('product_id')
+                product_id: urlParams.get('startapp')  // Change 'product_id' to 'startapp'
             };
         }
 
@@ -93,7 +93,10 @@
                         <h3><strong>Price:</strong> $${data.price}</h3>
                     `;
                 })
-                .catch(error => console.error('Error fetching product:', error));
+                .catch(error => {
+                    console.error('Error fetching product:', error);
+                    document.getElementById('productCard').innerHTML = '<p>Failed to load product details. Please try again later.</p>';
+                });
         }
 
         // Get product ID from URL and load product details
@@ -103,14 +106,6 @@
         } else {
             document.getElementById('productCard').innerHTML = '<p>Product not found.</p>';
         }
-
-        document.getElementById('orderForm').addEventListener('submit', function(event) {
-            event.preventDefault();  // Prevent normal form submission
-
-            // Submit the form via POST using the browser's form submission behavior
-            this.submit();
-        });
     </script>
-
 </body>
 </html>
