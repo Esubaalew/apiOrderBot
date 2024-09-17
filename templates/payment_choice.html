@@ -22,6 +22,11 @@
         .btn-primary:hover {
             background-color: #45a049;
         }
+        .instructions {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -40,18 +45,44 @@
                         <div class="mb-3">
                             <label class="form-label">Payment Method</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" id="bank" name="payment_method" value="bank" checked>
-                                <label class="form-check-label" for="bank">Bank</label>
+                                <input class="form-check-input" type="radio" id="cbe" name="payment_method" value="cbe" required>
+                                <label class="form-check-label" for="cbe">Commercial Bank of Ethiopia</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="boa" name="payment_method" value="boa" required>
+                                <label class="form-check-label" for="boa">Bank of Abyssinia</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="awash" name="payment_method" value="awash" required>
+                                <label class="form-check-label" for="awash">Awash Bank</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="enat" name="payment_method" value="enat" required>
+                                <label class="form-check-label" for="enat">Enat Bank</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="dashen" name="payment_method" value="dashen" required>
+                                <label class="form-check-label" for="dashen">Dashen Bank</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" id="chapa" name="payment_method" value="chapa" disabled>
                                 <label class="form-check-label" for="chapa">Chapa (Coming Soon)</label>
                             </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="telebirr" name="payment_method" value="telebirr" disabled>
+                                <label class="form-check-label" for="telebirr">Telebirr (Coming Soon)</label>
+                            </div>
                         </div>
+                        
+                        <div class="instructions" id="instructions">
+                            <!-- Instructions will be dynamically updated here -->
+                        </div>
+                        
                         <div class="mb-3">
                             <label for="receiptFile" class="form-label">Upload Bank Receipt</label>
                             <input type="file" class="form-control" id="receiptFile" name="receipt_file" accept=".jpg,.jpeg,.png,.pdf" required>
                         </div>
+                        
                         <button type="submit" class="btn btn-primary w-100" disabled>Submit Payment</button>
                     </form>
                 </div>
@@ -67,6 +98,31 @@
 
         const receiptInput = document.getElementById('receiptFile');
         const submitButton = document.querySelector('button[type="submit"]');
+        const instructionsDiv = document.getElementById('instructions');
+        const instructions = {
+            cbe: `Transfer the total price of ${{ order.total_price }} to the Commercial Bank of Ethiopia. Use account number: {{ random_account_number }}.`,
+            boa: `Transfer the total price of ${{ order.total_price }} to the Bank of Abyssinia. Use account number: {{ random_account_number }}.`,
+            awash: `Transfer the total price of ${{ order.total_price }} to Awash Bank. Use account number: {{ random_account_number }}.`,
+            enat: `Transfer the total price of ${{ order.total_price }} to Enat Bank. Use account number: {{ random_account_number }}.`,
+            dashen: `Transfer the total price of ${{ order.total_price }} to Dashen Bank. Use account number: {{ random_account_number }}.`,
+            chapa: `Chapa payment is coming soon. Please choose another payment method.`,
+            telebirr: `Telebirr payment is coming soon. Please choose another payment method.`
+        };
+
+        function updateInstructions() {
+            const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+            if (selectedMethod) {
+                const methodValue = selectedMethod.value;
+                instructionsDiv.innerHTML = instructions[methodValue];
+            } else {
+                instructionsDiv.innerHTML = '';
+            }
+        }
+
+        // Add event listener to radio buttons
+        document.querySelectorAll('input[name="payment_method"]').forEach(input => {
+            input.addEventListener('change', updateInstructions);
+        });
 
         // Enable submit button when file is uploaded
         receiptInput.addEventListener('change', function() {
@@ -78,6 +134,9 @@
             submitButton.disabled = true;
             submitButton.innerHTML = 'Processing...';
         });
+
+        // Initialize instructions based on the selected radio button
+        updateInstructions();
     </script>
 </body>
 </html>

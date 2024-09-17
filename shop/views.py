@@ -60,7 +60,7 @@ def webapp_view(request):
         phone_number = request.POST.get('phone_number')
         comment = request.POST.get('comment', '')
         quantity = int(request.POST.get('quantity', 1))
-
+        payment_method = request.POST.get('payment_method', 'cbe')
         total_price = product.price * quantity
 
         order = Order.objects.create(
@@ -71,7 +71,7 @@ def webapp_view(request):
             comment=comment,
             quantity=quantity,
             total_price=total_price,
-            payment_method='bank',
+            payment_method=payment_method,
             is_paid=False
         )
 
@@ -96,8 +96,7 @@ def payment_choice_view(request, order_id):
             order.save()
 
             return render(request, 'payment_success.html', {'order': order})
-
     else:
-        form = ReceiptUploadForm()
+        form = ReceiptUploadForm(instance=order)
 
     return render(request, 'payment_choice.html', {'form': form, 'order': order})
