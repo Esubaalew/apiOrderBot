@@ -47,7 +47,7 @@
         <!-- Order Form -->
         <div class="mt-4">
             <h4>Fill out your details to place the order:</h4>
-            <form id="orderForm" method="POST" class="mt-3">
+            <form id="orderForm" method="POST" enctype="multipart/form-data" class="mt-3">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="fullName" class="form-label">Full Name</label>
