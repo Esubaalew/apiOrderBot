@@ -73,16 +73,21 @@
         tg.expand();  // Expands the WebApp to fullscreen
 
         // Function to get query parameters
-        function getQueryParams() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return {
-                product_id: urlParams.get('startapp')  // Change 'product_id' to 'startapp'
-            };
-        }
+// Function to get query parameters
+function getQueryParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productIdWithPrefix = urlParams.get('tgWebAppStartParam');  // Use 'tgWebAppStartParam' instead of 'startapp'
+    const productId = productIdWithPrefix ? productIdWithPrefix.replace('product-', '') : null;
+    return {
+        product_id: productId
+    };
+}
+
+
 
         // Function to fetch and display product details
         function loadProduct(productId) {
-            
+
             fetch(`https://apiorderbot.onrender.com/api/products/${productId}`)
                 .then(response => response.json())
                 .then(data => {
