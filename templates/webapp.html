@@ -82,6 +82,7 @@
 
         // Function to fetch and display product details
         function loadProduct(productId) {
+            
             fetch(`https://apiorderbot.onrender.com/api/products/${productId}`)
                 .then(response => response.json())
                 .then(data => {
