@@ -20,3 +20,9 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Product, ProductAdmin)
+
+
+# change the title and header of the admin site
+admin.site.site_header = "Store Administration"
+admin.site.site_title = "Shop Admin Portal"
+admin.site.index_title = "Welcome to the Shop Admin  Dashboard"

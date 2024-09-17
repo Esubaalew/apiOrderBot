@@ -11,7 +11,7 @@ router.register(r'orders', OrderViewSet)
 
 urlpatterns = router.urls
 urlpatterns += [
-    path('webapp/', webapp_view, name='webapp_view'),
-     path('payment/<int:order_id>/', payment_choice_view, name='payment_choice'),
+    path('api/webapp/', webapp_view, name='webapp_view'),
+    path('api/payment/<int:order_id>/', payment_choice_view, name='payment_choice'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

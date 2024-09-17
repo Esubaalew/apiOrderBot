@@ -165,3 +165,7 @@ LOGGING = {
     },
 }
 
+
+# settings.py
+SITE_URL = 'https://apiorderbot.onrender.com'
+
