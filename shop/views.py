@@ -26,20 +26,27 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
 
 
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import Product, Order
+from .forms import ReceiptUploadForm
+
+
 @csrf_protect
 def webapp_view(request):
-    product_id = request.GET.get('product_id')
-    product = get_object_or_404(Product, id=product_id)
+    start_param = request.GET.get('tgWebAppStartParam', '')
+    if start_param.startswith('product-'):
+        product_id = start_param.split('-')[1]
+        product = get_object_or_404(Product, id=product_id)
+    else:
+        return render(request, '404.html')
 
     if request.method == 'POST':
-        # Retrieve form data
         full_name = request.POST.get('full_name')
         address = request.POST.get('address')
         phone_number = request.POST.get('phone_number')
-        comment = request.POST.get('comment', '')  # Optional
+        comment = request.POST.get('comment', '')
         amount = request.POST.get('amount')
 
-        # Create the order
         order = Order.objects.create(
             product=product,
             full_name=full_name,
@@ -47,31 +54,29 @@ def webapp_view(request):
             phone_number=phone_number,
             comment=comment,
             amount=amount,
-            payment_method='bank',  # Set default payment method for redirection
+            payment_method='bank',
             is_paid=False
         )
 
-        # Redirect to payment choice page
         return redirect('payment_choice', order_id=order.id)
 
     return render(request, 'webapp.html', {'product': product})
 
+
 @csrf_protect
 def payment_choice_view(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    
+
     if request.method == 'POST':
         form = ReceiptUploadForm(request.POST, request.FILES)
         if form.is_valid():
             payment_method = form.cleaned_data.get('payment_method')
             receipt_file = form.cleaned_data.get('receipt_file')
-            
-            # Update the order with payment method and receipt
+
             order.payment_method = payment_method
             order.receipt_file = receipt_file
             order.save()
 
-            # Redirect to success page
             return render(request, 'payment_success.html', {'order': order})
 
     else:
