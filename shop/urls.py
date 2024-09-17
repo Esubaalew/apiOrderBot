@@ -6,8 +6,8 @@ from rest_framework.routers import DefaultRouter
 from .views import ProductViewSet, OrderViewSet, webapp_view, payment_choice_view
 
 router = DefaultRouter()
-router.register(r'products', ProductViewSet)
-router.register(r'orders', OrderViewSet)
+router.register(r'api/products', ProductViewSet)
+router.register(r'api/orders', OrderViewSet)
 
 urlpatterns = router.urls
 urlpatterns += [
