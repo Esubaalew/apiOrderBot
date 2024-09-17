@@ -31,9 +31,9 @@ from .models import Product, Order
 from .forms import ReceiptUploadForm
 import logging
 
-
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
+
 
 @csrf_protect
 def webapp_view(request):
@@ -72,10 +72,11 @@ def webapp_view(request):
         address = request.POST.get('address')
         phone_number = request.POST.get('phone_number')
         comment = request.POST.get('comment', '')
-        amount = request.POST.get('amount')
+        quantity = request.POST.get('quantity')  # Updated field
 
         # Log form data
-        logger.info(f"Form Data - Full Name: {full_name}, Address: {address}, Phone: {phone_number}, Amount: {amount}")
+        logger.info(
+            f"Form Data - Full Name: {full_name}, Address: {address}, Phone: {phone_number}, Quantity: {quantity}")
 
         # Create order
         order = Order.objects.create(
@@ -84,13 +85,13 @@ def webapp_view(request):
             address=address,
             phone_number=phone_number,
             comment=comment,
-            amount=amount,
+            quantity=quantity,  # Updated field
             payment_method='bank',  # Default payment method
             is_paid=False
         )
 
         # Log the newly created order
-        logger.info(f"Order created - ID: {order.id}, Amount: {order.amount}, Product: {product.name}")
+        logger.info(f"Order created - ID: {order.id}, Quantity: {order.quantity}, Product: {product.name}")
 
         # Redirect to payment choice page
         return redirect('payment_choice', order_id=order.id)
@@ -98,6 +99,7 @@ def webapp_view(request):
     # Log rendering the product page
     logger.info(f"Rendering product page for product: {product.name}")
     return render(request, 'webapp.html', {'product': product})
+
 
 @csrf_protect
 def payment_choice_view(request, order_id):

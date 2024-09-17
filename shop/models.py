@@ -23,7 +23,7 @@ class Order(models.Model):
     address = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=15)
     comment = models.TextField(blank=True, null=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.PositiveIntegerField(default=0)  # Changed from amount to quantity
     order_date = models.DateTimeField(auto_now_add=True)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHODS, default='bank')
     receipt_file = models.FileField(upload_to='receipts/', blank=True, null=True)
@@ -31,3 +31,5 @@ class Order(models.Model):
 
     def __str__(self):
         return self.product.name
+
+

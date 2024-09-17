@@ -4,9 +4,9 @@ from .models import Order, Product
 
 class OrderAdmin(admin.ModelAdmin):
     model = Order
-    list_display = ('id', 'product', 'full_name', 'address', 'phone_number', 'comment', 'amount', 'order_date')
-    list_filter = ('product', 'full_name', 'address', 'phone_number', 'comment', 'amount', 'order_date')
-    search_fields = ('product', 'full_name', 'address', 'phone_number', 'comment', 'amount', 'order_date')
+    list_display = ('id', 'product', 'full_name', 'address', 'phone_number', 'comment', 'quantity', 'order_date')
+    list_filter = ('product', 'full_name', 'address', 'phone_number', 'comment', 'quantity', 'order_date')
+    search_fields = ('product', 'full_name', 'address', 'phone_number', 'comment', 'quantity', 'order_date')
     ordering = ('order_date',)
 
 

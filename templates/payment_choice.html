@@ -28,7 +28,7 @@
     <div class="container mt-5">
         <div class="payment-card">
             <h1>Select Payment Method for {{ order.product.name }}</h1>
-            <p>Amount: ${{ order.amount }}</p>
+            <p>Amount: ${{ order.quantity }}</p>
 
             <form id="paymentForm" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
