@@ -10606,3 +10606,5 @@ File C:\Users\esube\PycharmProjects\apiOrderBot\shop\migrations\0001_initial.py 
 File C:\Users\esube\PycharmProjects\apiOrderBot\.venv\Lib\site-packages\django\contrib\contenttypes\migrations\__init__.py first seen with mtime 1725864245.4889674
 File C:\Users\esube\PycharmProjects\apiOrderBot\.venv\Lib\site-packages\django\contrib\sessions\exceptions.py first seen with mtime 1725864248.6633732
 File C:\Users\esube\PycharmProjects\apiOrderBot\shop\migrations\0002_order_is_paid_order_payment_method_and_more.py first seen with mtime 1725958048.7240682
+File C:\Users\esube\PycharmProjects\apiOrderBot\templates\payment_choice.html previous mtime: 1726560288.4599993, current mtime: 1726561504.365315
+C:\Users\esube\PycharmProjects\apiOrderBot\templates\payment_choice.html notified as changed. Signal results: [(<function template_changed at 0x00000129E7119440>, True), (<function translation_file_changed at 0x00000129E805FE20>, None)].

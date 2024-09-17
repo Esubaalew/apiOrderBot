@@ -59,18 +59,18 @@
                 </div>
                 <div class="mb-3">
                     <label for="phoneNumber" class="form-label">Phone Number</label>
-                    <input type="text" class="form-control" id="phoneNumber" name="phone_number" placeholder="Enter your phone number" required>
+                    <input type="tel" class="form-control" id="phoneNumber" name="phone_number" pattern="[0-9]{10}" placeholder="Enter your phone number (10 digits)" required>
                 </div>
                 <div class="mb-3">
                     <label for="comment" class="form-label">Comment</label>
                     <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Add any additional information (optional)"></textarea>
                 </div>
-               <div class="mb-3">
-    <label for="quantity" class="form-label">Quantity</label>
-    <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
-</div>
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
+                </div>
 
-                <button type="submit" class="btn btn-primary w-100">Next</button>
+                <button type="submit" class="btn btn-primary w-100" disabled>Next</button>
             </form>
         </div>
     </div>
@@ -80,6 +80,28 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();  // Expands the WebApp to fullscreen
+
+        const phoneInput = document.getElementById('phoneNumber');
+        const quantityInput = document.getElementById('quantity');
+        const submitButton = document.querySelector('button[type="submit"]');
+        const formFields = [phoneInput, quantityInput];
+
+        // Validate phone number and quantity fields
+        formFields.forEach(field => {
+            field.addEventListener('input', function() {
+                if (phoneInput.validity.valid && quantityInput.value > 0) {
+                    submitButton.disabled = false;
+                } else {
+                    submitButton.disabled = true;
+                }
+            });
+        });
+
+        // Add loading state when form is submitted
+        document.getElementById('orderForm').addEventListener('submit', function(event) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = 'Processing...';
+        });
 
         // Function to get query parameters
         function getQueryParams() {
