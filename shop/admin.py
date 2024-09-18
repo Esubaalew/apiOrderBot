@@ -7,7 +7,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'product', 'full_name', 'address', 'phone_number', 'comment', 'quantity', 'order_date')
     list_filter = ('product', 'full_name', 'address', 'phone_number', 'comment', 'quantity', 'order_date')
     search_fields = ('product', 'full_name', 'address', 'phone_number', 'comment', 'quantity', 'order_date')
-    ordering = ('order_date',)
+    ordering = ('-order_date',)
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -15,7 +15,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'description', 'image', 'price', 'date_added')
     list_filter = ('name', 'price', 'date_added')
     search_fields = ('name', 'price', 'date_added')
-    ordering = ('date_added',)
+    ordering = ('-date_added',)
 
 
 admin.site.register(Order, OrderAdmin)

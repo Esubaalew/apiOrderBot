@@ -8,6 +8,9 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     date_added = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-date_added']
+
     def __str__(self):
         return self.name
 
@@ -34,6 +37,9 @@ class Order(models.Model):
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHODS, default='cbe')
     receipt_file = models.FileField(upload_to='receipts/', blank=True, null=True)
     is_paid = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-order_date']
 
     def save(self, *args, **kwargs):
         # Calculate the total price as product price times quantity
