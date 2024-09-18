@@ -8,31 +8,34 @@
 </head>
 <body>
     <div class="container mt-5">
+        <h1>Product Debug: {{ product }}</h1>
+
         <h1>Order Product: {{ product.name }}</h1>
         <p>{{ product.description }}</p>
         <p><strong>Price:</strong> ${{ product.price }}</p>
 
-        <form id="orderForm">
-            <!-- Order Form Fields -->
+        <!-- Use the form POST method -->
+        <form id="orderForm" method="POST">
+            {% csrf_token %}
             <div class="mb-3">
                 <label for="fullName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="fullName" required>
+                <input type="text" class="form-control" id="fullName" name="full_name" required>
             </div>
             <div class="mb-3">
                 <label for="address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="address" required>
+                <input type="text" class="form-control" id="address" name="address" required>
             </div>
             <div class="mb-3">
                 <label for="phoneNumber" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="phoneNumber" required>
+                <input type="text" class="form-control" id="phoneNumber" name="phone_number" required>
             </div>
             <div class="mb-3">
                 <label for="comment" class="form-label">Comment</label>
-                <textarea class="form-control" id="comment"></textarea>
+                <textarea class="form-control" id="comment" name="comment"></textarea>
             </div>
             <div class="mb-3">
                 <label for="amount" class="form-label">Amount</label>
-                <input type="number" class="form-control" id="amount" required>
+                <input type="number" class="form-control" id="amount" name="amount" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit Order</button>
         </form>
@@ -44,50 +47,17 @@
         const tg = window.Telegram.WebApp;
         tg.expand();  // Expands the WebApp to fullscreen
 
-        // Form submit event
         document.getElementById('orderForm').addEventListener('submit', function(event) {
             event.preventDefault();  // Prevent normal form submission
 
-            // Collect form data
-            const fullName = document.getElementById('fullName').value;
-            const address = document.getElementById('address').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            const comment = document.getElementById('comment').value;
-            const amount = document.getElementById('amount').value;
-            const productId = new URLSearchParams(window.location.search).get('product_id');  // Get product_id from URL query parameters
-
-            // Prepare data to be sent to API
-            const orderData = {
-                full_name: fullName,
-                address: address,
-                phone_number: phoneNumber,
-                comment: comment,
-                amount: amount,
-                product_id: productId
-            };
-
-            // Send the data to the API using Fetch
-            fetch('/api/products/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}',  // Make sure CSRF token is passed for security
-                },
-                body: JSON.stringify(orderData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert('Order submitted successfully!');
-                    tg.close();  // Close the Telegram WebApp after successful submission
-                } else {
-                    alert('Failed to submit order: ' + data.message);
-                }
-            })
-            .catch(error => {
-                alert('Error: ' + error.message);
-            });
+            // Submit the form via POST using the browser's form submission behavior
+            this.submit();
         });
+        window.onload = function() {
+    document.getElementById('spinner').style.display = 'none';
+};
+
     </script>
+
 </body>
 </html>
