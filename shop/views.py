@@ -28,6 +28,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from django.http import Http404
+
 
 @csrf_protect
 def webapp_view(request):
@@ -38,21 +40,36 @@ def webapp_view(request):
 
     logger.info(f"Start Parameter: {start_param}")
 
+    # Check if start_param is valid and starts with 'product-'
     if start_param.startswith('product-'):
         try:
             product_id = start_param.split('-')[1]
             logger.info(f"Product ID extracted: {product_id}")
 
-            product = get_object_or_404(Product, id=product_id)
-            logger.info(f"Product found: {product.name} (ID: {product.id})")
+            try:
+                product = get_object_or_404(Product, id=product_id)
+                logger.info(f"Product found: {product.name} (ID: {product.id})")
+
+            except Http404:
+                # Handle case where the product does not exist
+                logger.error("Product not found")
+                return render(request, '404.html', {
+                    'error': 'The product you are looking for does not exist.'
+                })
 
         except (IndexError, ValueError):
+            # Handle invalid product ID (e.g., if the product ID isn't correctly extracted)
             logger.error("Error extracting product ID from start_param")
-            return render(request, '404.html', {'error': 'Invalid product ID'})
+            return render(request, '404.html', {
+                'error': 'Invalid product ID provided. Please check the URL or select a valid product.'
+            })
 
     else:
+        # Handle invalid start_param
         logger.error("Invalid start_param, does not start with 'product-'")
-        return render(request, '404.html', {'error': 'Product not found'})
+        return render(request, '404.html', {
+            'error': 'Product not found. Please check the URL and try again.'
+        })
 
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
@@ -61,6 +78,7 @@ def webapp_view(request):
         comment = request.POST.get('comment', '')
         quantity = int(request.POST.get('quantity', 1))
         payment_method = request.POST.get('payment_method', 'cbe')
+
         total_price = product.price * quantity
 
         order = Order.objects.create(
@@ -100,3 +118,7 @@ def payment_choice_view(request, order_id):
         form = ReceiptUploadForm(instance=order)
 
     return render(request, 'payment_choice.html', {'form': form, 'order': order})
+
+
+def custom_404_view(request, exception):
+    return render(request, '404_custom.html', status=404)
