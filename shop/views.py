@@ -5,6 +5,8 @@ from .serializers import ProductSerializer, OrderSerializer
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.utils.decorators import method_decorator
 
+from django.http import Http404
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ProductViewSet(viewsets.ModelViewSet):
@@ -27,8 +29,6 @@ from .forms import ReceiptUploadForm
 import logging
 
 logger = logging.getLogger(__name__)
-
-from django.http import Http404
 
 
 @csrf_protect
